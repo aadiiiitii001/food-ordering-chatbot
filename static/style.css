@@ -1,0 +1,160 @@
+/* GENERAL STYLES */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+.app-container {
+  background: #fff;
+  border-radius: 20px;
+  width: 400px;
+  max-width: 95%;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* HEADER */
+.chat-header {
+  text-align: center;
+  background: #ff884b;
+  color: white;
+  padding: 20px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  animation: slideDown 0.8s ease;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* CHAT BOX */
+.chat-box {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f7f7f7;
+}
+
+/* SCROLLBAR STYLING */
+.chat-box::-webkit-scrollbar {
+  width: 5px;
+}
+.chat-box::-webkit-scrollbar-thumb {
+  background: #ff884b;
+  border-radius: 5px;
+}
+
+/* MESSAGE STYLES */
+.user-msg, .bot-msg {
+  max-width: 80%;
+  padding: 12px 15px;
+  border-radius: 18px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.user-msg {
+  align-self: flex-end;
+  background: #ff884b;
+  color: white;
+  border-bottom-right-radius: 0;
+}
+
+.bot-msg {
+  align-self: flex-start;
+  background: #eee;
+  border-bottom-left-radius: 0;
+}
+
+/* INPUT AREA */
+.input-area {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background: white;
+  animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.input-area input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input-area input:focus {
+  border-color: #ff884b;
+}
+
+.input-area button {
+  margin-left: 10px;
+  background: #ff884b;
+  border: none;
+  color: white;
+  border-radius: 20px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.input-area button:hover {
+  background: hsl(0, 0%, 39%);
+  transform: scale(1.05);
+}
+
+/* TYPING DOTS ANIMATION */
+.typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 15px;
+  background: #eee;
+  border-radius: 15px;
+  width: fit-content;
+  animation: fadeIn 0.4s ease-in;
+}
+
+.typing span {
+  width: 6px;
+  height: 6px;
+  background: #999;
+  border-radius: 50%;
+  animation: blink 1s infinite alternate;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  from { opacity: 0.3; transform: translateY(0px); }
+  to { opacity: 1; transform: translateY(-3px); }
+}
