@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Food Assistant</title>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #dfe4ea, #f1f2f6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .chat-container {
+      width: 400px;
+      background: #ffffff;
+      border-radius: 25px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      background: #2f3542;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #f7f7f7;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 10px 15px;
+      border-radius: 18px;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .user-message {
+      align-self: flex-end;
+      background: #2f3542;
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
+
+    .bot-message {
+      align-self: flex-start;
+      background: #dcdde1;
+      color: #2f3542;
+      border-bottom-left-radius: 5px;
+    }
+
+    .typing {
+      font-style: italic;
+      color: gray;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+      padding: 10px;
+      background: #f1f2f6;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      outline: none;
+      background: white;
+      font-size: 1rem;
+    }
+
+    .chat-input button {
+      background: #2f3542;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      margin-left: 8px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 500;
+    }
+
+    .chat-input button:hover {
+      background: #57606f;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ced6e0;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="chat-container">
+    <div class="chat-header">🍽️ Smart Food Assistant</div>
+
+    <div class="chat-body" id="chat-body">
+      <div class="bot-message">👋 Hi there! I’m your food assistant. Type <b>menu</b> to see our dishes.</div>
+    </div>
+
+    <div class="chat-input">
+      <input id="user-input" type="text" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()" />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const message = input.value.trim();
+      if (!message) return;
+
+      appendMessage(message, "user");
+      input.value = "";
+
+      // show typing indicator
+      const typingMsg = appendTyping();
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message }),
+        });
+
+        const data = await response.json();
+        removeTyping(typingMsg);
+        appendMessage(data.reply, "bot");
+      } catch (err) {
+        removeTyping(typingMsg);
+        appendMessage("⚠️ Server not responding. Try again.", "bot");
+      }
+    }
+
+    function appendMessage(text, sender) {
+      const chatBody = document.getElementById("chat-body");
+      const msgDiv = document.createElement("div");
+      msgDiv.classList.add("message", sender === "user" ? "user-message" : "bot-message");
+      msgDiv.innerText = text;
+      chatBody.appendChild(msgDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+      return msgDiv;
+    }
+
+    function appendTyping() {
+      const chatBody = document.getElementById("chat-body");
+      const typingDiv = document.createElement("div");
+      typingDiv.classList.add("message", "bot-message", "typing");
+      typingDiv.innerText = "🤖 Bot is typing...";
+      chatBody.appendChild(typingDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+      return typingDiv;
+    }
+
+    function removeTyping(typingDiv) {
+      typingDiv.remove();
+    }
+  </script>
+</body>
+</html>
