@@ -1,2 +1,9 @@
 flask
 gunicorn
+ 
+# AI / NLP (for Claude intent detection - optional but recommended)
+anthropic>=0.28.0
+ 
+# Environment variables
+python-dotenv>=1.0.0
+ 
