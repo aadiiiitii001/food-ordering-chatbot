@@ -1,449 +1,437 @@
-
-Copy
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zestora — Smart Food Assistant</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    /* ── Tokens ──────────────────────────────────────────────────────── */
-    :root {
-      --bg:        #0f0e0c;
-      --surface:   #1a1916;
-      --surface2:  #242320;
-      --accent:    #e8703a;
-      --accent2:   #f0a05a;
-      --text:      #f2ede6;
-      --muted:     #8a8070;
-      --bot-bg:    #1f1e1b;
-      --user-bg:   #e8703a;
-      --radius:    18px;
-      --font-head: 'DM Serif Display', Georgia, serif;
-      --font-body: 'DM Sans', sans-serif;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Zestora — Smart Food Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#0c0b09;--s1:#141310;--s2:#1c1a17;--s3:#252320;
+  --acc:#ff5722;--acc2:#ff8a50;--gold:#f5c842;
+  --text:#f0ebe3;--muted:#7a7060;--border:rgba(255,255,255,0.07);
+  --r:20px;--fh:'Syne',sans-serif;--fb:'Outfit',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overscroll-behavior:none}
+body{font-family:var(--fb);background:var(--bg);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px}
  
-    /* ── Reset ───────────────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+.app{width:430px;max-width:100%;height:820px;max-height:96vh;background:var(--s1);border-radius:28px;border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.7),0 0 0 1px rgba(255,87,34,0.06);position:relative}
  
-    body {
-      font-family: var(--font-body);
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+/* HEADER */
+.hdr{flex-shrink:0;background:var(--s1);border-bottom:1px solid var(--border);padding:16px 18px 12px}
+.hdr-top{display:flex;align-items:center;gap:11px}
+.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;box-shadow:0 4px 12px rgba(255,87,34,0.35)}
+.brand-name{font-family:var(--fh);font-size:19px;color:var(--text);font-weight:700;letter-spacing:-.01em}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.online{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:#6bcb6b}
+.online-dot{width:7px;height:7px;border-radius:50%;background:#6bcb6b;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.chips{display:flex;gap:6px;margin-top:11px;flex-wrap:wrap}
+.chip{font-family:var(--fb);font-size:11.5px;font-weight:500;color:var(--muted);border:1px solid var(--border);background:var(--s2);border-radius:30px;padding:5px 13px;cursor:pointer;transition:all .2s}
+.chip:hover{color:var(--acc2);border-color:rgba(255,87,34,.4);background:rgba(255,87,34,.08)}
  
-    /* subtle grain overlay */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.5;
-    }
+/* TABS */
+.tabs{flex-shrink:0;display:flex;border-bottom:1px solid var(--border);background:var(--s1)}
+.tab{flex:1;font-family:var(--fh);font-size:12px;font-weight:600;color:var(--muted);padding:10px 6px;text-align:center;border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.03em}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc)}
  
-    /* ── Shell ───────────────────────────────────────────────────────── */
-    .shell {
-      position: relative;
-      z-index: 1;
-      width: 420px;
-      max-width: 100%;
-      height: 680px;
-      max-height: 92vh;
-      background: var(--surface);
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.07);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow:
-        0 0 0 1px rgba(232,112,58,0.08),
-        0 32px 80px rgba(0,0,0,0.6);
-    }
+/* PANELS */
+.panel{display:none;flex:1;overflow:hidden;flex-direction:column}
+.panel.active{display:flex}
  
-    /* ── Header ──────────────────────────────────────────────────────── */
-    .header {
-      padding: 22px 24px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      flex-shrink: 0;
-    }
+/* CHAT */
+.chat-body{flex:1;overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+.chat-body::-webkit-scrollbar{width:3px}
+.chat-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+.msg-wrap{display:flex;flex-direction:column;gap:3px}
+.msg-wrap.bot{align-items:flex-start}.msg-wrap.user{align-items:flex-end}
+.msg{max-width:82%;padding:11px 15px;font-size:13.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;border-radius:var(--r);animation:rise .25s cubic-bezier(.22,1,.36,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.bot{background:var(--s2);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:4px}
+.msg.user{background:var(--acc);color:#fff;border-bottom-right-radius:4px}
+.msg-time{font-size:10px;color:var(--muted);padding:0 4px}
  
-    .header-top {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+.typing-dots{align-self:flex-start;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);border-bottom-left-radius:4px;padding:13px 16px;display:flex;gap:5px;align-items:center;animation:rise .2s ease both}
+.typing-dots span{width:6px;height:6px;background:var(--muted);border-radius:50%;animation:tdot 1.1s ease-in-out infinite}
+.typing-dots span:nth-child(2){animation-delay:.18s}.typing-dots span:nth-child(3){animation-delay:.36s}
+@keyframes tdot{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
  
-    .logo-mark {
-      width: 40px; height: 40px;
-      background: var(--accent);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
+.input-bar{flex-shrink:0;padding:12px 14px;border-top:1px solid var(--border);background:var(--s1);display:flex;gap:8px;align-items:center}
+.input-bar input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:22px;color:var(--text);font-family:var(--fb);font-size:13.5px;padding:10px 16px;outline:none;transition:border-color .2s}
+.input-bar input::placeholder{color:var(--muted)}
+.input-bar input:focus{border-color:rgba(255,87,34,.4)}
+.btn-icon{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.btn-voice{background:var(--s3);border:1px solid var(--border)}
+.btn-voice:hover{background:rgba(255,87,34,.15)}
+.btn-voice svg{width:16px;height:16px;fill:var(--muted)}
+.btn-voice.listening{background:rgba(255,87,34,.2);border-color:var(--acc)}
+.btn-voice.listening svg{fill:var(--acc);animation:pulse-mic .8s ease-in-out infinite}
+@keyframes pulse-mic{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.btn-send{background:var(--acc)}.btn-send:hover{background:var(--acc2)}.btn-send:active{transform:scale(.91)}
+.btn-send svg{width:17px;height:17px;fill:#fff;transform:translateX(1px)}
  
-    .brand h1 {
-      font-family: var(--font-head);
-      font-size: 20px;
-      color: var(--text);
-      font-weight: 400;
-      letter-spacing: 0.01em;
-    }
+/* MENU PANEL */
+.menu-scroll{flex:1;overflow-y:auto;padding:14px 14px 20px}
+.menu-scroll::-webkit-scrollbar{width:3px}
+.menu-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+.cat-label{font-family:var(--fh);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px 2px}
+.cat-label:first-child{margin-top:0}
+.food-cards{display:flex;flex-direction:column;gap:8px}
+.food-card{background:var(--s2);border:1px solid var(--border);border-radius:16px;display:flex;align-items:center;gap:12px;padding:12px;cursor:pointer;transition:border-color .2s,background .2s;animation:rise .3s ease both}
+.food-card:hover{border-color:rgba(255,87,34,.3);background:var(--s3)}
+.food-img{width:66px;height:66px;border-radius:12px;object-fit:cover;flex-shrink:0;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:28px}
+.food-info{flex:1;min-width:0}
+.food-name{font-family:var(--fh);font-size:14px;font-weight:600;color:var(--text)}
+.food-cat{font-size:11px;color:var(--muted);margin-top:2px}
+.food-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.food-price{font-size:13px;font-weight:500;color:var(--acc2)}
+.food-rating{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--gold)}
+.food-tag{font-size:10px;background:rgba(255,87,34,.15);color:var(--acc2);padding:2px 7px;border-radius:6px;font-weight:500}
+.add-btn{flex-shrink:0;width:32px;height:32px;border-radius:10px;background:rgba(255,87,34,.12);border:1px solid rgba(255,87,34,.25);color:var(--acc2);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
+.add-btn:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
  
-    .brand p {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 300;
-      margin-top: 1px;
-    }
+/* TRACK PANEL */
+.track-wrap{flex:1;overflow-y:auto;padding:20px 18px}
+.track-wrap::-webkit-scrollbar{width:3px}
+.track-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+.order-status-card{background:var(--s2);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:16px}
+.order-id{font-size:11px;color:var(--muted);margin-bottom:4px}
+.order-title{font-family:var(--fh);font-size:15px;color:var(--text);font-weight:600}
+.order-eta{margin-top:10px;padding:10px 14px;background:rgba(255,87,34,.08);border-radius:12px;border:1px solid rgba(255,87,34,.18);display:flex;align-items:center;gap:10px}
+.eta-icon{font-size:22px}.eta-text{font-size:13px;color:var(--text)}.eta-min{font-family:var(--fh);font-size:20px;font-weight:700;color:var(--acc);margin-left:auto}
+.steps{display:flex;flex-direction:column;gap:0;margin-top:20px}
+.step{display:flex;align-items:flex-start;gap:14px;padding-bottom:22px;position:relative}
+.step:last-child{padding-bottom:0}
+.step::after{content:'';position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--border)}
+.step:last-child::after{display:none}
+.step-dot{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;border:2px solid var(--border);background:var(--s2);z-index:1;transition:all .4s}
+.step.done .step-dot{background:var(--acc);border-color:var(--acc)}
+.step.active .step-dot{background:rgba(255,87,34,.15);border-color:var(--acc);animation:pulse-step 1.5s ease-in-out infinite}
+@keyframes pulse-step{0%,100%{box-shadow:0 0 0 0 rgba(255,87,34,.4)}60%{box-shadow:0 0 0 8px rgba(255,87,34,0)}}
+.step.active::after{background:linear-gradient(to bottom,var(--acc),var(--border))}
+.step.done::after{background:var(--acc)}
+.step-label{font-family:var(--fh);font-size:13px;font-weight:600;color:var(--text);margin-top:6px}
+.step-sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.map-card{background:var(--s2);border:1px solid var(--border);border-radius:18px;overflow:hidden;height:150px;position:relative;margin-top:16px;display:flex;align-items:center;justify-content:center}
+.map-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 60% 50%,rgba(255,87,34,.08),transparent 70%)}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:28px 28px}
+.map-rider{position:relative;z-index:1;font-size:28px;animation:ride 2s ease-in-out infinite alternate}
+@keyframes ride{from{transform:translateX(-18px)}to{transform:translateX(18px)}}
+.map-dest{position:absolute;right:28px;top:50%;transform:translateY(-50%);font-size:22px}
+.map-label{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-size:11px;color:var(--muted);white-space:nowrap}
+.no-order{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;height:100%;color:var(--muted);font-size:13px;text-align:center}
+.no-order-icon{font-size:46px;opacity:.4}
  
-    .status-dot {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: var(--muted);
-    }
+/* VOICE OVERLAY */
+.voice-overlay{display:none;position:absolute;inset:0;background:rgba(12,11,9,.93);z-index:50;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+.voice-overlay.show{display:flex}
+.voice-circle{width:90px;height:90px;border-radius:50%;background:rgba(255,87,34,.15);border:2px solid var(--acc);display:flex;align-items:center;justify-content:center;font-size:34px;animation:voice-pulse 1s ease-in-out infinite}
+@keyframes voice-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,87,34,.4)}50%{box-shadow:0 0 0 22px rgba(255,87,34,0)}}
+.voice-wave{display:flex;align-items:center;gap:4px;height:40px}
+.voice-bar{width:4px;border-radius:4px;background:var(--acc);animation:vbar .6s ease-in-out infinite alternate}
+.voice-bar:nth-child(1){height:12px;animation-delay:0s}.voice-bar:nth-child(2){height:24px;animation-delay:.1s}.voice-bar:nth-child(3){height:36px;animation-delay:.2s}.voice-bar:nth-child(4){height:20px;animation-delay:.15s}.voice-bar:nth-child(5){height:30px;animation-delay:.05s}.voice-bar:nth-child(6){height:14px;animation-delay:.25s}.voice-bar:nth-child(7){height:26px;animation-delay:.12s}
+@keyframes vbar{from{transform:scaleY(1)}to{transform:scaleY(1.8)}}
+.voice-text{font-family:var(--fh);font-size:15px;color:var(--text)}.voice-hint{font-size:12px;color:var(--muted);text-align:center;padding:0 30px}
+.voice-cancel{margin-top:8px;font-family:var(--fb);font-size:13px;color:var(--muted);border:1px solid var(--border);background:transparent;padding:8px 22px;border-radius:20px;cursor:pointer;transition:all .2s}
+.voice-cancel:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
  
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #5cb85c;
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
- 
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.4; }
-    }
- 
-    /* quick-action chips */
-    .chips {
-      display: flex;
-      gap: 6px;
-      margin-top: 14px;
-      flex-wrap: wrap;
-    }
- 
-    .chip {
-      font-size: 11px;
-      font-family: var(--font-body);
-      color: var(--muted);
-      border: 1px solid rgba(255,255,255,0.08);
-      background: var(--surface2);
-      border-radius: 20px;
-      padding: 4px 12px;
-      cursor: pointer;
-      transition: color 0.2s, border-color 0.2s, background 0.2s;
-    }
- 
-    .chip:hover {
-      color: var(--accent2);
-      border-color: rgba(232,112,58,0.35);
-      background: rgba(232,112,58,0.08);
-    }
- 
-    /* ── Chat body ───────────────────────────────────────────────────── */
-    .chat-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      scroll-behavior: smooth;
-    }
- 
-    .chat-body::-webkit-scrollbar { width: 4px; }
-    .chat-body::-webkit-scrollbar-track { background: transparent; }
-    .chat-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
- 
-    /* ── Messages ────────────────────────────────────────────────────── */
-    .msg {
-      max-width: 80%;
-      padding: 11px 16px;
-      border-radius: var(--radius);
-      font-size: 14px;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      word-break: break-word;
-      animation: rise 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
- 
-    @keyframes rise {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
- 
-    .msg.bot {
-      align-self: flex-start;
-      background: var(--bot-bg);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-bottom-left-radius: 5px;
-    }
- 
-    .msg.user {
-      align-self: flex-end;
-      background: var(--user-bg);
-      color: #fff;
-      border-bottom-right-radius: 5px;
-    }
- 
-    /* timestamp */
-    .msg-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
- 
-    .msg-wrap.user { align-items: flex-end; }
-    .msg-wrap.bot  { align-items: flex-start; }
- 
-    .msg-time {
-      font-size: 10px;
-      color: var(--muted);
-      padding: 0 4px;
-      opacity: 0.7;
-    }
- 
-    /* typing indicator */
-    .typing-dots {
-      align-self: flex-start;
-      background: var(--bot-bg);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: var(--radius);
-      border-bottom-left-radius: 5px;
-      padding: 13px 18px;
-      display: flex;
-      gap: 5px;
-      align-items: center;
-      animation: rise 0.2s ease both;
-    }
- 
-    .typing-dots span {
-      width: 6px; height: 6px;
-      background: var(--muted);
-      border-radius: 50%;
-      animation: bounce 1.1s ease-in-out infinite;
-    }
- 
-    .typing-dots span:nth-child(2) { animation-delay: 0.18s; }
-    .typing-dots span:nth-child(3) { animation-delay: 0.36s; }
- 
-    @keyframes bounce {
-      0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
-      40%           { transform: translateY(-5px); opacity: 1; }
-    }
- 
-    /* ── Input bar ───────────────────────────────────────────────────── */
-    .input-bar {
-      flex-shrink: 0;
-      padding: 14px 16px;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      background: var(--surface);
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
- 
-    .input-bar input {
-      flex: 1;
-      background: var(--surface2);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 22px;
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 14px;
-      padding: 11px 18px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
- 
-    .input-bar input::placeholder { color: var(--muted); }
-    .input-bar input:focus { border-color: rgba(232,112,58,0.4); }
- 
-    .send-btn {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: none;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.2s, transform 0.15s;
-    }
- 
-    .send-btn:hover  { background: var(--accent2); }
-    .send-btn:active { transform: scale(0.92); }
- 
-    .send-btn svg {
-      width: 18px; height: 18px;
-      fill: white;
-      transform: translateX(1px);
-    }
- 
-    /* ── Empty state ─────────────────────────────────────────────────── */
-    .empty-state {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 13px;
-      text-align: center;
-      pointer-events: none;
-      user-select: none;
-    }
- 
-    .empty-state svg {
-      width: 48px; height: 48px;
-      opacity: 0.18;
-    }
-  </style>
+/* TOAST */
+.toast{position:absolute;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--s3);border:1px solid var(--border);border-radius:30px;padding:9px 20px;font-size:13px;color:var(--text);opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:40}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
 </head>
- 
 <body>
-  <div class="shell">
+<div class="app">
  
-    <!-- Header -->
-    <div class="header">
-      <div class="header-top">
-        <div class="logo-mark">🍽</div>
-        <div class="brand">
-          <h1>Zestora</h1>
-          <p>Smart Food Assistant</p>
-        </div>
-        <div class="status-dot">
-          <div class="dot"></div>
-          Online
-        </div>
-      </div>
-      <div class="chips">
-        <button class="chip" onclick="quickSend('show menu')">📋 Menu</button>
-        <button class="chip" onclick="quickSend('show cart')">🛒 My cart</button>
-        <button class="chip" onclick="quickSend('recommend me something')">✨ Suggest</button>
-        <button class="chip" onclick="quickSend('checkout')">✅ Checkout</button>
-      </div>
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="logo">🍽</div>
+      <div><div class="brand-name">Zestora</div><div class="brand-sub">Smart Food Assistant</div></div>
+      <div class="online"><div class="online-dot"></div>Online</div>
     </div>
- 
-    <!-- Chat body -->
-    <div class="chat-body" id="chat-body">
-      <!-- Welcome message injected by JS -->
+    <div class="chips">
+      <button class="chip" onclick="quickChat('show menu')">📋 Menu</button>
+      <button class="chip" onclick="quickChat('show cart')">🛒 Cart</button>
+      <button class="chip" onclick="quickChat('recommend me something')">✨ Suggest</button>
+      <button class="chip" onclick="switchTab('track')">📍 Track</button>
+      <button class="chip" onclick="quickChat('checkout')">✅ Checkout</button>
     </div>
+  </div>
  
-    <!-- Input -->
+  <div class="tabs">
+    <button class="tab active" id="tab-chat"  onclick="switchTab('chat')">💬 Chat</button>
+    <button class="tab"        id="tab-menu"  onclick="switchTab('menu')">🍴 Menu</button>
+    <button class="tab"        id="tab-track" onclick="switchTab('track')">📍 Track</button>
+  </div>
+ 
+  <!-- CHAT PANEL -->
+  <div class="panel active" id="panel-chat">
+    <div class="chat-body" id="chat-body"></div>
     <div class="input-bar">
-      <input
-        id="msg-input"
-        type="text"
-        placeholder="Type a message…"
-        autocomplete="off"
-        onkeydown="if(event.key==='Enter') sendMessage()"
-      />
-      <button class="send-btn" onclick="sendMessage()" aria-label="Send">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-        </svg>
+      <input id="msg-input" type="text" placeholder="Ask me anything…" autocomplete="off" onkeydown="if(event.key==='Enter')sendMessage()"/>
+      <button class="btn-icon btn-voice" id="voice-btn" onclick="toggleVoice()" title="Voice input">
+        <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4zm6 9a1 1 0 0 0-2 0 4 4 0 0 1-8 0 1 1 0 0 0-2 0 6 6 0 0 0 5 5.92V18H9a1 1 0 0 0 0 2h6a1 1 0 0 0 0-2h-2v-2.08A6 6 0 0 0 18 10z"/></svg>
+      </button>
+      <button class="btn-icon btn-send" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
       </button>
     </div>
   </div>
  
-  <script>
-    const chatBody   = document.getElementById('chat-body');
-    const msgInput   = document.getElementById('msg-input');
-    let   typingEl   = null;
+  <!-- MENU PANEL -->
+  <div class="panel" id="panel-menu">
+    <div class="menu-scroll" id="menu-scroll"></div>
+  </div>
  
-    // ── Helpers ──────────────────────────────────────────────────────────────
+  <!-- TRACK PANEL -->
+  <div class="panel" id="panel-track">
+    <div class="track-wrap" id="track-wrap">
+      <div class="no-order" id="no-order">
+        <div class="no-order-icon">🛵</div>
+        <div>No active order yet.</div>
+        <div style="font-size:11px;margin-top:4px">Place an order to track it live here!</div>
+      </div>
+    </div>
+  </div>
  
-    function getTime() {
-      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  <!-- VOICE OVERLAY -->
+  <div class="voice-overlay" id="voice-overlay">
+    <div class="voice-circle">🎙</div>
+    <div class="voice-wave">
+      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+      <div class="voice-bar"></div><div class="voice-bar"></div><div class="voice-bar"></div>
+      <div class="voice-bar"></div>
+    </div>
+    <div class="voice-text">Listening…</div>
+    <div class="voice-hint">Say something like "order cheese pizza" or "show menu"</div>
+    <button class="voice-cancel" onclick="stopVoice()">✕ Cancel</button>
+  </div>
+ 
+  <div class="toast" id="toast"></div>
+</div>
+ 
+<script>
+/* ═══════════════ MENU DATA — mirrors your SQLite DB */
+const MENU = [
+  {id:1, name:"Cheese Pizza",        price:250, cat:"Main Course", emoji:"🍕", rating:4.5, tag:"Bestseller"},
+  {id:2, name:"Paneer Burger",       price:180, cat:"Snacks",      emoji:"🍔", rating:4.3, tag:""},
+  {id:3, name:"Veg Sandwich",        price:120, cat:"Snacks",      emoji:"🥪", rating:4.1, tag:""},
+  {id:4, name:"Cold Coffee",         price:100, cat:"Beverage",    emoji:"☕", rating:4.4, tag:""},
+  {id:5, name:"Chocolate Shake",     price:150, cat:"Beverage",    emoji:"🥤", rating:4.6, tag:"Popular"},
+  {id:6, name:"French Fries",        price:90,  cat:"Snacks",      emoji:"🍟", rating:4.2, tag:""},
+  {id:7, name:"Pasta Alfredo",       price:220, cat:"Main Course", emoji:"🍝", rating:4.7, tag:"Chef's Pick"},
+  {id:8, name:"Tandoori Paneer Roll",price:160, cat:"Wraps",       emoji:"🌯", rating:4.5, tag:""},
+];
+ 
+/* ═══════════════ TABS */
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  if(name==='menu') buildMenuCards();
+}
+ 
+/* ═══════════════ MENU CARDS */
+function buildMenuCards(){
+  const scroll = document.getElementById('menu-scroll');
+  if(scroll.dataset.built) return;
+  scroll.dataset.built='1';
+  const cats=[...new Set(MENU.map(i=>i.cat))];
+  cats.forEach(cat=>{
+    const lbl=document.createElement('div');
+    lbl.className='cat-label'; lbl.textContent=cat;
+    scroll.appendChild(lbl);
+    const grp=document.createElement('div');
+    grp.className='food-cards';
+    MENU.filter(i=>i.cat===cat).forEach(item=>grp.appendChild(buildCard(item)));
+    scroll.appendChild(grp);
+  });
+}
+ 
+function buildCard(item){
+  const card=document.createElement('div');
+  card.className='food-card';
+  card.innerHTML=`
+    <div class="food-img">${item.emoji}</div>
+    <div class="food-info">
+      <div class="food-name">${item.name}${item.tag?` <span class="food-tag">${item.tag}</span>`:''}</div>
+      <div class="food-cat">${item.cat}</div>
+      <div class="food-row">
+        <span class="food-price">₹${item.price}</span>
+        <span class="food-rating">⭐ ${item.rating}</span>
+      </div>
+    </div>
+    <button class="add-btn" title="Add to cart">+</button>
+  `;
+  card.querySelector('.add-btn').addEventListener('click',e=>{e.stopPropagation();addFromMenu(item)});
+  card.addEventListener('click',()=>addFromMenu(item));
+  return card;
+}
+ 
+function addFromMenu(item){
+  switchTab('chat');
+  showToast(`🛒 Adding ${item.name}…`);
+  setTimeout(()=>{ document.getElementById('msg-input').value=`order ${item.name}`; sendMessage(); },300);
+}
+ 
+/* ═══════════════ CHAT */
+const chatBody=document.getElementById('chat-body');
+let typingEl=null;
+ 
+function getTime(){ return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) }
+function scrollBot(){ chatBody.scrollTop=chatBody.scrollHeight }
+ 
+function appendMsg(text,role){
+  const wrap=document.createElement('div');
+  wrap.className=`msg-wrap ${role}`;
+  const bubble=document.createElement('div');
+  bubble.className=`msg ${role}`;
+  bubble.textContent=text;
+  const time=document.createElement('div');
+  time.className='msg-time'; time.textContent=getTime();
+  wrap.appendChild(bubble); wrap.appendChild(time);
+  chatBody.appendChild(wrap); scrollBot();
+}
+function showTyping(){ typingEl=document.createElement('div'); typingEl.className='typing-dots'; typingEl.innerHTML='<span></span><span></span><span></span>'; chatBody.appendChild(typingEl); scrollBot() }
+function hideTyping(){ if(typingEl){typingEl.remove();typingEl=null} }
+ 
+/* ═══════════════ SEND */
+async function sendMessage(){
+  const input=document.getElementById('msg-input');
+  const text=input.value.trim();
+  if(!text) return;
+  appendMsg(text,'user');
+  input.value='';
+  showTyping();
+  try{
+    const res=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});
+    const data=await res.json();
+    hideTyping();
+    appendMsg(data.reply,'bot');
+    // Trigger tracking on successful checkout
+    if(data.reply && (data.reply.includes('Order placed') || data.reply.includes('Thank you for your order'))){
+      const orderId = data.order_id || 'ORD-'+Math.floor(1000+Math.random()*9000);
+      startTracking(orderId);
+      showToast('📍 Track your order live in the Track tab!');
     }
+  } catch(e){
+    hideTyping();
+    appendMsg('⚠️ Server not responding. Make sure your Flask app is running on localhost:5000.','bot');
+  }
+}
  
-    function scrollBottom() {
-      chatBody.scrollTop = chatBody.scrollHeight;
+function quickChat(text){
+  document.getElementById('msg-input').value=text;
+  sendMessage();
+}
+ 
+/* ═══════════════ VOICE */
+let recognition=null, isListening=false;
+ 
+function toggleVoice(){ isListening?stopVoice():startVoice() }
+ 
+function startVoice(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ showToast('🎙 Speech recognition not supported in this browser'); return }
+  recognition=new SR();
+  recognition.lang='en-IN';
+  recognition.interimResults=false;
+  recognition.maxAlternatives=1;
+  document.getElementById('voice-overlay').classList.add('show');
+  document.getElementById('voice-btn').classList.add('listening');
+  isListening=true;
+  recognition.onresult=e=>{ const t=e.results[0][0].transcript; stopVoice(); document.getElementById('msg-input').value=t; setTimeout(sendMessage,300) };
+  recognition.onerror=()=>{ stopVoice(); showToast('🎙 Could not hear you. Try again.') };
+  recognition.onend=()=>{ if(isListening) stopVoice() };
+  recognition.start();
+}
+ 
+function stopVoice(){
+  if(recognition){ try{recognition.stop()}catch(e){} recognition=null }
+  document.getElementById('voice-overlay').classList.remove('show');
+  document.getElementById('voice-btn').classList.remove('listening');
+  isListening=false;
+}
+ 
+/* ═══════════════ ORDER TRACKING */
+const STEPS=[
+  {label:'Order Placed',     sub:'Your order has been confirmed',   emoji:'✅'},
+  {label:'Being Prepared',   sub:'Our chefs are cooking your food', emoji:'👨‍🍳'},
+  {label:'Quality Check',    sub:'Freshness & packaging verified',  emoji:'📦'},
+  {label:'Out for Delivery', sub:'Rider is heading to you',         emoji:'🛵'},
+  {label:'Delivered! 🎉',    sub:'Enjoy your meal!',                emoji:'🎉'},
+];
+ 
+let trackTimer=null, currentStep=0, orderEta=35;
+ 
+function startTracking(orderId){
+  currentStep=0; orderEta=35;
+  renderTrack(orderId);
+  clearInterval(trackTimer);
+  trackTimer=setInterval(()=>{
+    if(currentStep<STEPS.length-1){
+      currentStep++;
+      orderEta=Math.max(0,orderEta-8);
+      renderTrack(orderId);
+      if(currentStep===STEPS.length-1){ clearInterval(trackTimer); showToast('🎉 Delivered! Enjoy your meal!') }
     }
+  },10000);
+}
  
-    function appendMsg(text, role) {
-      const wrap = document.createElement('div');
-      wrap.className = `msg-wrap ${role}`;
+function renderTrack(orderId){
+  const wrap=document.getElementById('track-wrap');
+  document.getElementById('no-order').style.display='none';
+  wrap.querySelectorAll('.order-status-card,.steps,.map-card').forEach(e=>e.remove());
  
-      const bubble = document.createElement('div');
-      bubble.className = `msg ${role}`;
-      bubble.textContent = text;
+  const card=document.createElement('div');
+  card.className='order-status-card';
+  card.innerHTML=`
+    <div class="order-id">Order #${orderId}</div>
+    <div class="order-title">${STEPS[currentStep].label}</div>
+    <div class="order-eta">
+      <div class="eta-icon">🕐</div>
+      <div class="eta-text">Estimated delivery</div>
+      <div class="eta-min">${orderEta} min</div>
+    </div>`;
+  wrap.appendChild(card);
  
-      const time = document.createElement('div');
-      time.className = 'msg-time';
-      time.textContent = getTime();
+  const stepsEl=document.createElement('div');
+  stepsEl.className='steps';
+  STEPS.forEach((s,i)=>{
+    const el=document.createElement('div');
+    el.className='step '+(i<currentStep?'done':i===currentStep?'active':'');
+    el.innerHTML=`<div class="step-dot">${s.emoji}</div><div><div class="step-label">${s.label}</div><div class="step-sub">${s.sub}</div></div>`;
+    stepsEl.appendChild(el);
+  });
+  wrap.appendChild(stepsEl);
  
-      wrap.appendChild(bubble);
-      wrap.appendChild(time);
-      chatBody.appendChild(wrap);
-      scrollBottom();
-      return wrap;
-    }
+  const mapCard=document.createElement('div');
+  mapCard.className='map-card';
+  mapCard.innerHTML=`
+    <div class="map-bg"></div><div class="map-grid"></div>
+    <div class="map-rider">${currentStep===3?'🛵':'👨‍🍳'}</div>
+    <div class="map-dest">🏠</div>
+    <div class="map-label">Live route • updating every 10s</div>`;
+  wrap.appendChild(mapCard);
+}
  
-    function showTyping() {
-      typingEl = document.createElement('div');
-      typingEl.className = 'typing-dots';
-      typingEl.innerHTML = '<span></span><span></span><span></span>';
-      chatBody.appendChild(typingEl);
-      scrollBottom();
-    }
+/* ═══════════════ TOAST */
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
  
-    function hideTyping() {
-      if (typingEl) { typingEl.remove(); typingEl = null; }
-    }
- 
-    function quickSend(text) {
-      msgInput.value = text;
-      sendMessage();
-    }
- 
-    // ── Core send ────────────────────────────────────────────────────────────
- 
-    async function sendMessage() {
-      const text = msgInput.value.trim();
-      if (!text) return;
- 
-      appendMsg(text, 'user');
-      msgInput.value = '';
-      showTyping();
- 
-      try {
-        const res  = await fetch('/chat', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ message: text }),
-        });
-        const data = await res.json();
-        hideTyping();
-        appendMsg(data.reply, 'bot');
-      } catch {
-        hideTyping();
-        appendMsg('⚠️ Could not reach the server. Please try again.', 'bot');
-      }
-    }
- 
-    // ── Boot ─────────────────────────────────────────────────────────────────
- 
-    window.addEventListener('DOMContentLoaded', () => {
-      appendMsg("👋 Hi! I'm Zestora, your food assistant.\nTap a quick action above or tell me what you'd like to order!", 'bot');
-      msgInput.focus();
-    });
-  </script>
+/* ═══════════════ BOOT */
+window.addEventListener('DOMContentLoaded',()=>{
+  appendMsg("👋 Hi! I'm Zestora, your smart food assistant.\n\nHere's what I can do:\n🍴 Browse the Menu tab — tap any dish to order\n🎙 Tap the mic to order by voice\n📍 Track your order live in the Track tab\n✨ Ask me to recommend something!\n\nWhat would you like today?",'bot');
+  document.getElementById('msg-input').focus();
+});
+</script>
 </body>
 </html>
- 
